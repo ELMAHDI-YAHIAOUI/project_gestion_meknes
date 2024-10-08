@@ -17,7 +17,7 @@ function App() {
                     <Route path='/Show/:id' element={<Show/>} />
                 </Routes>
             </BrowserRouter>
-   
+
         </>
     )
 }
