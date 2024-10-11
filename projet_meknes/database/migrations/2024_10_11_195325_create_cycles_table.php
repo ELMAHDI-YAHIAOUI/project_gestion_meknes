@@ -11,18 +11,24 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ecoles', function (Blueprint $table) {
-            $table->id("id_ecole");
-            $table->string("nom_ecole");
+        Schema::create('cycles', function (Blueprint $table) {
+            $table->id("id_cycle");
+            $table->string("libelle");
+
+
+            $table->unsignedBigInteger('id_ecole');
+            $table->foreign("id_ecole")->references("id_ecole")->on("ecoles")->coscadeOnDelete();
+
+
             $table->timestamps();
         });
     }
-    
+
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('ecoles');
+        Schema::dropIfExists('cycles');
     }
 };

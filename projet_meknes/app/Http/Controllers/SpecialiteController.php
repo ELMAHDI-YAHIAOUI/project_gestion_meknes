@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\commande;
+use App\Models\specialite;
 use Illuminate\Http\Request;
 
-class CommandeController extends Controller
+class SpecialiteController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-      return command::all();
+        //
     }
 
     /**
@@ -28,16 +28,13 @@ class CommandeController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-
-            ""=>""
-        ]);
+        //
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(commande $commande)
+    public function show(specialite $specialite)
     {
         //
     }
@@ -45,7 +42,7 @@ class CommandeController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(commande $commande)
+    public function edit(specialite $specialite)
     {
         //
     }
@@ -53,7 +50,7 @@ class CommandeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, commande $commande)
+    public function update(Request $request, specialite $specialite)
     {
         //
     }
@@ -61,7 +58,7 @@ class CommandeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(commande $commande)
+    public function destroy(specialite $specialite)
     {
         //
     }

@@ -11,18 +11,22 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ecoles', function (Blueprint $table) {
-            $table->id("id_ecole");
-            $table->string("nom_ecole");
+        Schema::create('niveaux', function (Blueprint $table) {
+            $table->id("id_niveau");
+            $table->string("libelle");
+            $table->unsignedBigInteger('id_cycle');
+            $table->foreign("id_cycle")->references("id_cycle")->on("cycles")->coscadeOnDelete();
+
+
             $table->timestamps();
         });
     }
-    
+
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('ecoles');
+        Schema::dropIfExists('niveaux');
     }
 };
