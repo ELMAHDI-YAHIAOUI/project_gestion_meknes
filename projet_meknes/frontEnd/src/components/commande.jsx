@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
-
 const CommandeForm = () => {
   const [formValues, setFormValues] = useState({
     fullName: '',
@@ -18,57 +17,62 @@ const CommandeForm = () => {
     averageQuality: false,
   });
 
+  // select functions
+  const [ecoles, setEcoles] = useState([]);
+  const [filteredEcoles, setFilteredEcoles] = useState([]);
+  const [cycles, setCycles] = useState([]);
+  const [niveaux, setNiveaux] = useState([]);
+  const [specialtes, setSpecialtes] = useState([]);
 
+  const [selectedEcole, setSelectedEcole] = useState(null);
+  const [selectedCycle, setSelectedCycle] = useState(null);
+  const [selectedNiveau, setSelectedNiveau] = useState(null);
 
-
-// select functions
-
-const [ecoles, setEcoles] = useState([]);
-const [cycles, setCycles] = useState([]);
-const [niveaux, setNiveaux] = useState([]);
-const [specialtes, setSpecialtes] = useState([]);
-
-const [selectedEcole, setSelectedEcole] = useState(null);
-const [selectedCycle, setSelectedCycle] = useState(null);
-const [selectedNiveau, setSelectedNiveau] = useState(null);
-
-// Fetch ecoles (assuming you already have an API for fetching ecoles)
-useEffect(() => {
+  // Fetch ecoles (assuming you already have an API for fetching ecoles)
+  useEffect(() => {
     axios.get("http://localhost:8000/api/ecoles")
-        .then(response => setEcoles(response.data))
-        .catch(error => console.error("Error fetching ecoles:", error));
-}, []);
+      .then(response => {
+        setEcoles(response.data);
+        setFilteredEcoles(response.data); // Initialize with all écoles
+      })
+      .catch(error => console.error("Error fetching ecoles:", error));
+  }, []);
 
-// Fetch cycles when ecole is selected
-const handleEcoleChange = (ecoleId) => {
+  // Handle search input change
+  const handleSearchChange = (event) => {
+    const { name, value } = event.target;
+    setFormValues({ ...formValues, [name]: value });
+
+    // Filter the écoles based on the search input
+    const filtered = ecoles.filter(ecole =>
+      ecole.nom_ecole.toLowerCase().includes(value.toLowerCase())
+    );
+    setFilteredEcoles(filtered); // Update filtered écoles
+  };
+
+  // Fetch cycles when ecole is selected
+  const handleEcoleChange = (ecoleId) => {
     setSelectedEcole(ecoleId);
     axios.get(`http://localhost:8000/api/ecole/${ecoleId}/cycles`)
-        .then(response => setCycles(response.data))
-        .catch(error => console.error("Error fetching cycles:", error));
-};
+      .then(response => setCycles(response.data))
+      .catch(error => console.error("Error fetching cycles:", error));
+  };
 
-// Fetch niveaux when cycle is selected
-const handleCycleChange = (cycleId) => {
+  // Fetch niveaux when cycle is selected
+  const handleCycleChange = (cycleId) => {
     setSelectedCycle(cycleId);
     axios.get(`http://localhost:8000/api/cycle/${cycleId}/niveaux`)
-        .then(response => setNiveaux(response.data))
-        .catch(error => console.error("Error fetching niveaux:", error));
-};
+      .then(response => setNiveaux(response.data))
+      .catch(error => console.error("Error fetching niveaux:", error));
+  };
 
-// Fetch specialtes when niveau is selected
-const handleNiveauChange = (niveauId) => {
+  // Fetch specialtes when niveau is selected
+  const handleNiveauChange = (niveauId) => {
     setSelectedNiveau(niveauId);
     axios.get(`http://localhost:8000/api/niveau/${niveauId}/specialtes`)
-        .then(response => setSpecialtes(response.data))
-        .catch(error => console.error("Error fetching specialtes:", error));
-};
-
-
-// end of select functions
-
-
-
-
+      .then(response => setSpecialtes(response.data))
+      .catch(error => console.error("Error fetching specialtes:", error));
+  };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -88,10 +92,10 @@ const handleNiveauChange = (niveauId) => {
     setFormValues((prev) => {
       const newValues = {
         ...prev,
-        [name]: !prev[name], // Change l'état de la case cochée (livres, cahiers, fournitures)
+        [name]: !prev[name], // Toggle the checkbox state (books, notebooks, fournitures)
       };
 
-      // Si "tout la commande" est cochée, décocher les autres cases
+      // If "allCommands" is checked, uncheck the others
       if (name === 'allCommands') {
         return {
           ...newValues,
@@ -101,18 +105,18 @@ const handleNiveauChange = (niveauId) => {
         };
       }
 
-      // Vérifiez si toutes les cases spécifiques sont cochées
+      // Check if all specific boxes are checked
       const allChecked =
         newValues.books && newValues.notebooks && newValues.fournitures;
 
       if (allChecked) {
-        // Si les trois sont cochées, décocher et cocher "toute la commande"
+        // If all three are checked, uncheck and check "allCommands"
         newValues.books = false;
         newValues.notebooks = false;
         newValues.fournitures = false;
-        newValues.allCommands = true; // Coche "toute la commande"
+        newValues.allCommands = true; // Check "allCommands"
       } else {
-        // Si "toute la commande" est décochée, décocher les autres
+        // If "allCommands" is unchecked, uncheck others
         newValues.allCommands = false;
       }
 
@@ -128,135 +132,112 @@ const handleNiveauChange = (niveauId) => {
     }));
   };
 
-
-
   return (
-<form onSubmit={handleSubmit} className="bg-white p-5 rounded-lg shadow-md w-full">
-  <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-8 flex justify-center">Formulaire de la Commande</h1>
+    <form onSubmit={handleSubmit} className="bg-white p-5 rounded-lg shadow-md w-full">
+      <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-8 flex justify-center">Formulaire de la Commande</h1>
 
-  <div className="grid gap-6 mb-6 md:grid-cols-2">
-    <div>
-      <label htmlFor="fullName" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nom Compléte</label>
-      <input
-        type="text"
-        id="fullName"
-        name="fullName"
-        value={formValues.fullName}
-        onChange={handleChange}
-        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 w-full"
-        placeholder="Nom Compléte"
-        required
-      />
-    </div>
+      <div className="grid gap-6 mb-6 md:grid-cols-2">
+        <div>
+          <label htmlFor="fullName" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nom Compléte</label>
+          <input
+            type="text"
+            id="fullName"
+            name="fullName"
+            value={formValues.fullName}
+            onChange={handleChange}
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 w-full"
+            placeholder="Nom Compléte"
+            required
+          />
+        </div>
 
-    <div>
-      <label htmlFor="phone" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Téléphone</label>
-      <div className="relative">
-        <input
-          type="tel"
-          id="phone"
-          name="phone"
-          value={formValues.phone}
-          onChange={handleChange}
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg pl-12 p-2.5 w-full"
-          placeholder="123-456-7890"
-          pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-          required
-        />
+        <div>
+          <label htmlFor="phone" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Téléphone</label>
+          <div className="relative">
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              value={formValues.phone}
+              onChange={handleChange}
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg pl-12 p-2.5 w-full"
+              placeholder="123-456-7890"
+              pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+              required
+            />
+          </div>
+        </div>
+
+        {/* École Select with Search */}
+        <div className="mb-6">
+          <label htmlFor="schoolSearch" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">École :</label>
+          <input
+            type="text"
+            id="schoolSearch"
+            name="schoolSearch"
+            value={formValues.schoolSearch}
+            onChange={handleSearchChange}
+            placeholder="Rechercher une école..."
+            className="block w-full p-2 border rounded-lg"
+          />
+          <select
+            multiple
+            id="school"
+            className="mt-2 block w-full p-2 border rounded-lg"
+            onChange={e => handleEcoleChange(e.target.value)}
+          >
+            {filteredEcoles.map(ecole => (
+              <option key={ecole.id_ecole} value={ecole.id_ecole}>
+                {ecole.nom_ecole}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label htmlFor="cycle" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Cycle</label>
+          <select
+            onChange={e => handleCycleChange(e.target.value)} disabled={!selectedEcole}
+            id="cycle"
+            name="cycle"
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 w-full"
+            required
+          >
+            <option value="">Sélectionner un cycle</option>
+            {cycles.map(cycle => (
+              <option key={cycle.id_cycle} value={cycle.id_cycle}>
+                {cycle.libelle}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
-    </div>
 
+      <div>
+        <label htmlFor="niveau" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Niveau</label>
+        <select
+          onChange={e => handleNiveauChange(e.target.value)} disabled={!selectedCycle}
+          id="niveau"
+          name="niveau"
+          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 w-full"
+          required
+        >
+          <option value="">Sélectionner un niveau</option>
+          {niveaux.map(niveau => (
+            <option key={niveau.id_niveau} value={niveau.id_niveau}>
+              {niveau.libelle}
+            </option>
+          ))}
+        </select>
+      </div>
 
-
-
-
-
-
-            {/* Ecole Select */}
-
-
-    <div className="mb-6">
-    <label htmlFor="schoolSearch" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">École :</label>
-    <input
-      type="text"
-      id="schoolSearch"
-      name="schoolSearch"
-      value={formValues.schoolSearch}
-      onChange={handleChange}
-      placeholder="Rechercher une école..."
-      className="block w-full p-2 border rounded-lg"
-    />
-    <select multiple id="school" className="mt-2 block w-full p-2 border rounded-lg"  onChange={e => handleEcoleChange(e.target.value)}>
-    {ecoles.map(ecole => (
-                    <option key={ecole.id_ecole} value={ecole.id_ecole}>
-                        {ecole.nom_ecole}
-                    </option>
-                ))}
-    </select>
-  </div>
-
-
-
-
-
-
-
-  <div>
-      <label htmlFor="cycle" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Cycle</label>
-      <select
-
-onChange={e => handleCycleChange(e.target.value)} disabled={!selectedEcole}
-        id="cycle"
-        name="cycle"
-
-
-        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 w-full"
-        required
-      >
-        <option value="">Sélectionner un cycle</option>
-        {cycles.map(cycle => (
-                    <option key={cycle.id_cycle} value={cycle.id_cycle}>
-                        {cycle.libelle}
-                    </option>
-                ))}
-      </select>
-    </div>
-  </div>
-
-
-
-
-    <div>
-      <label htmlFor="niveau" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Niveau</label>
-      <select
-       onChange={e => handleNiveauChange(e.target.value)} disabled={!selectedCycle}
-        id="niveau"
-        name="niveau"
-        
-
-        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 w-full"
-        required
-      >
-        <option value="">Sélectionner un niveau</option>
-        {niveaux.map(niveau => (
-                    <option key={niveau.id_niveau} value={niveau.id_niveau}>
-                        {niveau.libelle}
-                    </option>
-                ))}
-      </select>
-    </div>
-
-
-
-
-    <div>
-      <label htmlFor="niveau" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Specialite</label>
-      <select
-        id="Specialite"
-        name="Specialite"
-        disabled={!selectedNiveau}
-
-        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 w-full"
+      <div>
+        <label htmlFor="niveau" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Spécialité</label>
+        <select
+          id="Specialite"
+          name="Specialite"
+          disabled={!selectedNiveau}
+          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 w-full"
         required
       >
         <option value="">Sélectionner un Specialite</option>
