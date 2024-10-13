@@ -12,7 +12,7 @@ class CycleController extends Controller
      */
     public function index()
     {
-        //
+        return cycle::all();
     }
 
     /**

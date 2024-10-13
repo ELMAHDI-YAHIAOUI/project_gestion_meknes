@@ -6,6 +6,7 @@ import Edit from './components/edit'
 import Show from './components/show'
 import Create from './components/create'
 import CommandeForm from './components/commande'
+import FF from './components/xsxs'
 function App() {
     return (
         <>
@@ -14,6 +15,8 @@ function App() {
                 <Routes>
                     <Route path='/' element={<Index/>} />
                     <Route path='/CommandeForm' element={<CommandeForm/>} />
+                    <Route path='/FF' element={<FF/>} />
+
 
 
                     <Route path='/Edit/:id' element={<Edit/>} />

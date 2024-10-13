@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+
 
 const CommandeForm = () => {
   const [formValues, setFormValues] = useState({
@@ -16,21 +18,64 @@ const CommandeForm = () => {
     averageQuality: false,
   });
 
+
+
+
+// select functions
+
+const [ecoles, setEcoles] = useState([]);
+const [cycles, setCycles] = useState([]);
+const [niveaux, setNiveaux] = useState([]);
+const [specialtes, setSpecialtes] = useState([]);
+
+const [selectedEcole, setSelectedEcole] = useState(null);
+const [selectedCycle, setSelectedCycle] = useState(null);
+const [selectedNiveau, setSelectedNiveau] = useState(null);
+
+// Fetch ecoles (assuming you already have an API for fetching ecoles)
+useEffect(() => {
+    axios.get("http://localhost:8000/api/ecoles")
+        .then(response => setEcoles(response.data))
+        .catch(error => console.error("Error fetching ecoles:", error));
+}, []);
+
+// Fetch cycles when ecole is selected
+const handleEcoleChange = (ecoleId) => {
+    setSelectedEcole(ecoleId);
+    axios.get(`http://localhost:8000/api/ecole/${ecoleId}/cycles`)
+        .then(response => setCycles(response.data))
+        .catch(error => console.error("Error fetching cycles:", error));
+};
+
+// Fetch niveaux when cycle is selected
+const handleCycleChange = (cycleId) => {
+    setSelectedCycle(cycleId);
+    axios.get(`http://localhost:8000/api/cycle/${cycleId}/niveaux`)
+        .then(response => setNiveaux(response.data))
+        .catch(error => console.error("Error fetching niveaux:", error));
+};
+
+// Fetch specialtes when niveau is selected
+const handleNiveauChange = (niveauId) => {
+    setSelectedNiveau(niveauId);
+    axios.get(`http://localhost:8000/api/niveau/${niveauId}/specialtes`)
+        .then(response => setSpecialtes(response.data))
+        .catch(error => console.error("Error fetching specialtes:", error));
+};
+
+
+// end of select functions
+
+
+
+
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormValues((prev) => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value,
     }));
-  };
-
-  const schools = ['école 1', 'école 2', 'école 3', 'école 4', 'école 5'];
-
-  const filterSchools = () => {
-    const input = formValues.schoolSearch.toLowerCase();
-    return schools.filter((school) =>
-      school.toLowerCase().startsWith(input)
-    );
   };
 
   const handleSubmit = (e) => {
@@ -83,8 +128,7 @@ const CommandeForm = () => {
     }));
   };
 
-  const niveaux = ['Débutant', 'Intermédiaire', 'Avancé'];
-  const cycles = ['Cycle 1', 'Cycle 2', 'Cycle 3'];
+
 
   return (
 <form onSubmit={handleSubmit} className="bg-white p-5 rounded-lg shadow-md w-full">
@@ -122,46 +166,16 @@ const CommandeForm = () => {
       </div>
     </div>
 
-    <div>
-      <label htmlFor="niveau" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Niveau</label>
-      <select
-        id="niveau"
-        name="niveau"
-        value={formValues.niveau}
-        onChange={handleChange}
-        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 w-full"
-        required
-      >
-        <option value="">Sélectionner un niveau</option>
-        {niveaux.map((niveau) => (
-          <option key={niveau} value={niveau}>
-            {niveau}
-          </option>
-        ))}
-      </select>
-    </div>
 
-    <div>
-      <label htmlFor="cycle" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Cycle</label>
-      <select
-        id="cycle"
-        name="cycle"
-        value={formValues.cycle}
-        onChange={handleChange}
-        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 w-full"
-        required
-      >
-        <option value="">Sélectionner un cycle</option>
-        {cycles.map((cycle) => (
-          <option key={cycle} value={cycle}>
-            {cycle}
-          </option>
-        ))}
-      </select>
-    </div>
-  </div>
 
-  <div className="mb-6">
+
+
+
+
+            {/* Ecole Select */}
+
+
+    <div className="mb-6">
     <label htmlFor="schoolSearch" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">École :</label>
     <input
       type="text"
@@ -172,14 +186,88 @@ const CommandeForm = () => {
       placeholder="Rechercher une école..."
       className="block w-full p-2 border rounded-lg"
     />
-    <select multiple id="school" className="mt-2 block w-full p-2 border rounded-lg">
-      {filterSchools().map((school) => (
-        <option key={school} value={school}>
-          {school}
-        </option>
-      ))}
+    <select multiple id="school" className="mt-2 block w-full p-2 border rounded-lg"  onChange={e => handleEcoleChange(e.target.value)}>
+    {ecoles.map(ecole => (
+                    <option key={ecole.id_ecole} value={ecole.id_ecole}>
+                        {ecole.nom_ecole}
+                    </option>
+                ))}
     </select>
   </div>
+
+
+
+
+
+
+
+  <div>
+      <label htmlFor="cycle" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Cycle</label>
+      <select
+
+onChange={e => handleCycleChange(e.target.value)} disabled={!selectedEcole}
+        id="cycle"
+        name="cycle"
+
+
+        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 w-full"
+        required
+      >
+        <option value="">Sélectionner un cycle</option>
+        {cycles.map(cycle => (
+                    <option key={cycle.id_cycle} value={cycle.id_cycle}>
+                        {cycle.libelle}
+                    </option>
+                ))}
+      </select>
+    </div>
+  </div>
+
+
+
+
+    <div>
+      <label htmlFor="niveau" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Niveau</label>
+      <select
+       onChange={e => handleNiveauChange(e.target.value)} disabled={!selectedCycle}
+        id="niveau"
+        name="niveau"
+        
+
+        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 w-full"
+        required
+      >
+        <option value="">Sélectionner un niveau</option>
+        {niveaux.map(niveau => (
+                    <option key={niveau.id_niveau} value={niveau.id_niveau}>
+                        {niveau.libelle}
+                    </option>
+                ))}
+      </select>
+    </div>
+
+
+
+
+    <div>
+      <label htmlFor="niveau" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Specialite</label>
+      <select
+        id="Specialite"
+        name="Specialite"
+        disabled={!selectedNiveau}
+
+        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 w-full"
+        required
+      >
+        <option value="">Sélectionner un Specialite</option>
+        {specialtes.map(specialte => (
+                    <option key={specialte.id_specialite} value={specialte.id_specialite}>
+                        {specialte.libelle}
+                    </option>
+                ))}
+      </select>
+    </div>
+
 
   <div className="mb-6">
     <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">Commande :</h3>

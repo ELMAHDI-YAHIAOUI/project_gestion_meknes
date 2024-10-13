@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\product;
+use App\Models\resCommande;
 use Illuminate\Http\Request;
 
-class ProductController extends Controller
+class ResCommandeController extends Controller
 {
-
+    /**
+     * Display a listing of the resource.
+     */
     public function index()
     {
-     return product::all() ;
+        //
     }
 
     /**
@@ -26,46 +28,38 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        product::create($request->post());
-         return response()->json("seccses ");
-    }       
+        //
+    }
 
     /**
      * Display the specified resource.
      */
-    public function show(product $product)
+    public function show(resCommande $resCommande)
     {
-        return response()->json([
-            "product" => $product
-        ]);
-
+        //
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(product $product)
+    public function edit(resCommande $resCommande)
     {
-
-
+        //
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, product $product)
+    public function update(Request $request, resCommande $resCommande)
     {
-        $product->update($request->all());
-        return response()->json($product);
+        //
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(product $product)
+    public function destroy(resCommande $resCommande)
     {
-        $product->delete();
-        return response()->json("tama 7adfooha ");
-
+        //
     }
 }
