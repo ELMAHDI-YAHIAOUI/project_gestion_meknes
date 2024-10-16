@@ -16,6 +16,10 @@ return new class extends Migration
             $table->string("nom_complete");
             $table->string("telephone");
             $table->string("niveau");
+            $table->string('ecole');
+            $table->string('specialite');
+            $table->string('cycle');
+
 
 
 

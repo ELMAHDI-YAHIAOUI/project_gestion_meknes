@@ -7,7 +7,8 @@ import Create from './components/create';
 import Login from './components/loginComponent/login';
 import Register from './components/loginComponent/register';
 import Logout from './components/loginComponent/Logout';
-
+import CommandeForm from './components/commandeComponent/commande'
+import FF from './components/xsxs'
 function App() {
     return (
         <Router>
@@ -19,6 +20,9 @@ function App() {
                 <Route path='/Login' element={<Login />} />
                 <Route path='/Register' element={<Register />} />
                 <Route path='/Logout' element={<Logout />} />
+
+                <Route path='/CommandeForm' element={<CommandeForm/>} />
+                <Route path='/FF' element={<FF/>} />
             </Routes>
         </Router>
     );
