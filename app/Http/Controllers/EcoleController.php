@@ -30,6 +30,9 @@ class EcoleController extends Controller
         $specialtes = specialite::where('id_niveau', $niveau_id)->get();
         return response()->json($specialtes);
     }
+
+
+   
     /**
      * Display a listing of the resource.
      */

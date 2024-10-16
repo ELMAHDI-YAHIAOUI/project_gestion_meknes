@@ -41,4 +41,5 @@ Route::get('cycle/{cycle_id}/niveaux', [EcoleController::class, 'getNiveaux']);
 Route::get('niveau/{niveau_id}/specialtes', [EcoleController::class, 'getSpecialtes']);
 
 
+
 Route::post('/api/commandes', [CommandeController::class, 'store']);

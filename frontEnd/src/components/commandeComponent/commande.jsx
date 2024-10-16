@@ -19,6 +19,7 @@ const CommandeForm = () => {
     selectedSchool: [],
   });
 
+
   const [ecoles, setEcoles] = useState([]);
   const [filteredEcoles, setFilteredEcoles] = useState([]);
   const [cycles, setCycles] = useState([]);
@@ -28,6 +29,12 @@ const CommandeForm = () => {
   const [selectedEcole, setSelectedEcole] = useState(null);
   const [selectedCycle, setSelectedCycle] = useState(null);
   const [selectedNiveau, setSelectedNiveau] = useState(null);
+  const [selectspecialite, setselectspecialite] = useState(null);
+const ec =ecoles.filter((x)=>x.id_ecole==selectedEcole).map((v)=>(v.nom_ecole)).join(', ')
+const cy = cycles.filter((x)=>x.id_cycle==selectedCycle).map((v)=>(v.libelle)).join(', ')
+const ni = niveaux.filter((x) => x.id_niveau == selectedNiveau).map((v) => v.libelle).join(', ');
+
+
 
   useEffect(() => {
     // Fetch schools on component mount
@@ -70,6 +77,10 @@ const CommandeForm = () => {
       .catch(error => console.error("Error fetching specialtes:", error));
   };
 
+
+
+
+
 // Fonction pour mettre à jour les valeurs des formulaires
 const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -82,28 +93,30 @@ const handleChange = (e) => {
 
   const submitForm = async (event) => {
     event.preventDefault(); // Empêche le rechargement de la page
+ let qualite = {
+    "goodQuality": formValues.goodQuality,
+    "averageQuality": formValues.averageQuality,
+}
 
     const dataToSend = {
         nom_complet: formValues.fullName,
         telephone: formValues.phone,
-        niveau: formValues.niveau || '',
-        cycle: formValues.cycle || '',
-        specialite: formValues.specialite || '',
+        niveau: ni,
+        cycle: cy,
+        specialite: selectspecialite,
         commandes: {
             allCommands: formValues.allCommands,
             books: formValues.books,
             notebooks: formValues.notebooks,
             fournitures: formValues.fournitures,
         },
-        qualite: {
-            goodQuality: formValues.goodQuality,
-            averageQuality: formValues.averageQuality,
-        },
-        schoolSearch: formValues.schoolSearch || '',
-        selectedSchool: formValues.selectedSchool || [],
+        qualite:quality ,
+        ecoles : ec
     };
+    const quality = Object.keys(qualite).find(key => dataToSend.qualite[key] === true);
 
-    console.log('Données à envoyer:', dataToSend); // Vérifiez les données
+
+    console.log('Données à envoyer:', quality); // Vérifiez les données
 
     try {
         const response = await axios.post('http://localhost:8000/api/commandes', dataToSend, {
@@ -258,10 +271,11 @@ const handleChange = (e) => {
           disabled={!selectedNiveau}
           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg p-2.5 w-full"
           required
+          onChange={(e)=>setselectspecialite(e.target.value)}
         >
           <option value="">Sélectionner une spécialité</option>
           {specialtes.map(specialte => (
-            <option key={specialte.id_specialite} value={specialte.id_specialite}>
+            <option key={specialte.id_specialite} value={specialte.libelle}>
               {specialte.libelle}
             </option>
           ))}
