@@ -29,39 +29,46 @@ class CommandeController extends Controller
      */
     public function store(Request $request)
     {
-        // Validation des données du formulaire
+        // Vérifiez les données reçues
+        dd($request->all()); // Cela affichera toutes les données que vous avez envoyées
+
+        // Validation des données
         $validatedData = $request->validate([
-            'nom_complet' => 'required|string|max:255',
-            'telephone' => 'required|string|max:15',
-            'ecole' => 'required|string|max:255',
-            'niveau' => 'required|string|max:255',
-            'cycle' => 'required|string|max:255',
-            'specialite' => 'required|string|max:255',
-            'date' => 'required|date',
-            'qualite' => 'required|string|max:255',
-            'commande' => 'required|string|max:255',
+            'nom_complet' => 'required|string',
+            'telephone' => 'required|string',
+            'niveau' => 'required|string',
+            'ecole' => 'required|string',
+            'specialite' => 'required|string',
+            'cycle' => 'required|string',
+            'qualite' => 'required|string',
+            'commandes' => 'required|array', // Assurez-vous que les commandes sont un tableau
         ]);
 
-        // Création d'un nouvel enregistrement dans la table clients
-        $client = Client::create([
-            'nom_complet' => $validatedData['nom_complet'],
-            'telephone' => $validatedData['telephone'],
-            'ecole' => $validatedData['ecole'],
-            'niveau' => $validatedData['niveau'],
-            'cycle' => $validatedData['cycle'],
-            'specialite' => $validatedData['specialite'],
-        ]);
+        try {
+            // Créer un client
+            $client = Client::create([
+                'nom_complete' => $validatedData['nom_complet'],
+                'telephone' => $validatedData['telephone'],
+                'niveau' => $validatedData['niveau'],
+                'ecole' => $validatedData['ecole'],
+                'specialite' => $validatedData['specialite'],
+                'cycle' => $validatedData['cycle'],
+            ]);
 
-        // Création d'un nouvel enregistrement dans la table commande
-        Commande::create([
-            'orderDate' => now(), // Enregistre la date actuelle
-            'qualite' => $validatedData['qualite'],
-            'commande' => $validatedData['commande'],
-            'client_id' => $client->id, // Ajoutez cette ligne si vous avez une clé étrangère dans la table commande
-        ]);
+            // Créer une commande
+            Commande::create([
+                'orderDate' => now(),
+                'qualite' => $validatedData['qualite'],
+                'commande' => json_encode($validatedData['commandes']), // Assurez-vous que cela correspond à votre structure de données
+                'client_id' => $client->id,
+            ]);
 
-        return response()->json(['message' => 'Commande créée avec succès'], 201);
+            return response()->json(['message' => 'Commande créée avec succès'], 201);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Erreur : ' . $e->getMessage()], 500);
+        }
     }
+
 
     /**
      * Display the specified resource.

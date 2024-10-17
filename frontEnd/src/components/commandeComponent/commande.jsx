@@ -91,12 +91,16 @@ const handleChange = (e) => {
 };
 
 
-  const submitForm = async (event) => {
+const submitForm = async (event) => {
     event.preventDefault(); // Empêche le rechargement de la page
- let qualite = {
-    "goodQuality": formValues.goodQuality,
-    "averageQuality": formValues.averageQuality,
-}
+
+    let qualite = {
+        "goodQuality": formValues.goodQuality,
+        "averageQuality": formValues.averageQuality,
+    };
+
+    // Créer une variable quality après avoir initialisé qualite
+    const quality = Object.keys(qualite).find(key => qualite[key] === true);
 
     const dataToSend = {
         nom_complet: formValues.fullName,
@@ -110,18 +114,16 @@ const handleChange = (e) => {
             notebooks: formValues.notebooks,
             fournitures: formValues.fournitures,
         },
-        qualite:quality ,
+        qualite: quality,
         ecoles : ec
     };
-    const quality = Object.keys(qualite).find(key => dataToSend.qualite[key] === true);
 
-
-    console.log('Données à envoyer:', quality); // Vérifiez les données
+    console.log('Données à envoyer:', dataToSend);
 
     try {
         const response = await axios.post('http://localhost:8000/api/commandes', dataToSend, {
             headers: {
-                'Content-Type': 'application/json', // Assurez-vous que le type de contenu est correct
+                'Content-Type': 'application/json', 
             },
         });
         console.log('Données envoyées avec succès:', response.data);
@@ -129,6 +131,7 @@ const handleChange = (e) => {
         console.error("Erreur lors de l'envoi des données:", error.response ? error.response.data : error);
     }
 };
+
 
 
 

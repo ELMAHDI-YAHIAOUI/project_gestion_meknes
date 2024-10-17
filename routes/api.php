@@ -42,4 +42,9 @@ Route::get('niveau/{niveau_id}/specialtes', [EcoleController::class, 'getSpecial
 
 
 
-Route::post('/api/commandes', [CommandeController::class, 'store']);
+Route::post('commandes', [CommandeController::class, 'store']);
+
+
+
+
+

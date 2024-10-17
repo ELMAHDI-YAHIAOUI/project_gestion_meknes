@@ -11,8 +11,13 @@ class commande extends Model
 {
     use HasFactory;
 
-    protected $fillable =["commande", "qualite", "id_client","id_etatCommande"];
-    protected $primaryKey="id_commande";
+    protected $fillable = [
+        'orderDate',
+        'qualite',
+        'commande',
+        'client_id',
+    ];
+        protected $primaryKey="id_commande";
 
     public function client(){
         return $this->belongsTo(client::class,'id_client');

@@ -10,8 +10,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class client extends Model
 {
     use HasFactory;
-     protected $fillable =["nom_complete", "telephone", "niveau","id_ecole"];
-     protected $primaryKey="id_client";
+    protected $fillable = [
+        'nom_complete',
+        'telephone',
+        'niveau',
+        'ecole',
+        'specialite',
+        'cycle',
+    ];     protected $primaryKey="id_client";
 
 
     public function ecole(){
