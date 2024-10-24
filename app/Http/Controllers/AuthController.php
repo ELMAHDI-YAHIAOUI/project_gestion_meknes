@@ -15,15 +15,15 @@ class AuthController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => ['required', 'string', 'min:8', 'confirmed'], // 'confirmed' will check for the password confirmation
-            'role' => 'nullable|string|max:255', // Validation du champ role
+            'password' => ['required', 'string', 'min:8', 'confirmed'], 
+            'role' => 'nullable|string|max:255',
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => $request->role, // Enregistrer le role
+            'role' => $request->role,
         ]);
 
         return response()->json([
@@ -50,8 +50,10 @@ class AuthController extends Controller
             ], 200);
         }
 
-        return response()->json(['message' => 'Invalid login credentials'], 422);
+        return response()->json(['message' => 'Invalid login credentials'], 401);
     }
+
+
 
 
 

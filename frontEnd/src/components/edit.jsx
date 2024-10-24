@@ -28,7 +28,7 @@ export default function Edit() {
 
       const response = await axios.post(`http://127.0.0.1:8000/api/product/${id}`, data);
       console.log("Product updated successfully:", response.data);
-      navigate("/"); 
+      navigate("/");
 
   };
 

@@ -1,5 +1,5 @@
-import axios from 'axios';
 import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 
 const CommandeForm = () => {
@@ -30,6 +30,9 @@ const CommandeForm = () => {
   const [selectedCycle, setSelectedCycle] = useState(null);
   const [selectedNiveau, setSelectedNiveau] = useState(null);
   const [selectspecialite, setselectspecialite] = useState(null);
+
+
+
 const ec =ecoles.filter((x)=>x.id_ecole==selectedEcole).map((v)=>(v.nom_ecole)).join(', ')
 const cy = cycles.filter((x)=>x.id_cycle==selectedCycle).map((v)=>(v.libelle)).join(', ')
 const ni = niveaux.filter((x) => x.id_niveau == selectedNiveau).map((v) => v.libelle).join(', ');
@@ -37,7 +40,6 @@ const ni = niveaux.filter((x) => x.id_niveau == selectedNiveau).map((v) => v.lib
 
 
   useEffect(() => {
-    // Fetch schools on component mount
     axios.get("http://localhost:8000/api/ecoles")
       .then(response => {
         setEcoles(response.data);
@@ -45,6 +47,7 @@ const ni = niveaux.filter((x) => x.id_niveau == selectedNiveau).map((v) => v.lib
       })
       .catch(error => console.error("Error fetching ecoles:", error));
   }, []);
+
 
   const handleSearchChange = (event) => {
     const { name, value } = event.target;
@@ -77,29 +80,21 @@ const ni = niveaux.filter((x) => x.id_niveau == selectedNiveau).map((v) => v.lib
       .catch(error => console.error("Error fetching specialtes:", error));
   };
 
-
-
-
-
-// Fonction pour mettre à jour les valeurs des formulaires
 const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormValues((prevValues) => ({
         ...prevValues,
-        [name]: type === 'checkbox' ? checked : value || '', // Assurez-vous que les valeurs sont toujours des chaînes
+        [name]: type === 'checkbox' ? checked : value || '',
     }));
 };
 
 
 const submitForm = async (event) => {
-    event.preventDefault(); // Empêche le rechargement de la page
-
+    event.preventDefault();
     let qualite = {
         "goodQuality": formValues.goodQuality,
         "averageQuality": formValues.averageQuality,
     };
-
-    // Créer une variable quality après avoir initialisé qualite
     const quality = Object.keys(qualite).find(key => qualite[key] === true);
 
     const dataToSend = {
@@ -121,41 +116,31 @@ const submitForm = async (event) => {
     console.log('Données à envoyer:', dataToSend);
 
     try {
-        const response = await axios.post('http://localhost:8000/api/commandes', dataToSend, {
-            headers: {
-                'Content-Type': 'application/json', 
-            },
-        });
+        const response = await axios.post('http://localhost:8000/api/commandes', dataToSend, {withCredentials: false,});
         console.log('Données envoyées avec succès:', response.data);
     } catch (error) {
         console.error("Erreur lors de l'envoi des données:", error.response ? error.response.data : error);
     }
 };
 
-
-
-
-
   const toggleCommandCheckboxes = (name) => {
     setFormValues((prev) => {
       const newValues = { ...prev, [name]: !prev[name] };
 
-      // Condition 1: Si l'utilisateur coche l'une des cases (livres, cahiers, fournitures) et "Toute la commande" est cochée
       if (name !== 'allCommands' && prev.allCommands) {
-        newValues.allCommands = false; // Décoche "Toute la commande"
+        newValues.allCommands = false;
       }
 
-      // Condition 2: Vérifier si toutes les cases livres, cahiers, fournitures sont cochées
       if (newValues.books && newValues.notebooks && newValues.fournitures) {
         return {
-          allCommands: true,  // Coche "Toute la commande"
-          books: false,       // Décoche "Livres"
-          notebooks: false,   // Décoche "Cahiers"
-          fournitures: false,    // Décoche "Fournitures"
+          allCommands: true,
+          notebooks: false,
+          books: false,
+          fournitures: false,
         };
       }
 
-      return newValues; // Renvoie les nouvelles valeurs
+      return newValues;
     });
   };
 
@@ -194,7 +179,7 @@ const submitForm = async (event) => {
               type="tel"
               id="phone"
               name="phone"
-              value={formValues.phone || ''} // Assurez-vous que la valeur est une chaîne
+              value={formValues.phone || ''}
               onChange={handleChange}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg pl-12 p-2.5 w-full"
               placeholder="123-456-7890"

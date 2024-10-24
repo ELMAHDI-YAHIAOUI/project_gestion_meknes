@@ -6,7 +6,7 @@ const Logout = () => {
 
     const handleLogout = () => {
         logout();
-        setMessage('You have been successfully logged out.'); // Set the success message
+        setMessage('You have been successfully logged out.'); 
     };
 
     return (
@@ -14,7 +14,7 @@ const Logout = () => {
             <button onClick={handleLogout}>
                 Déconnexion
             </button>
-            {message && <p>{message}</p>} {/* Display the message if it exists */}
+            {message && <p>{message}</p>}
         </div>
     );
 };

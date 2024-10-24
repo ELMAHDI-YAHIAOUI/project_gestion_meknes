@@ -1,35 +1,36 @@
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { fetchProducts, deleteProduct } from '../authService';
+// import { useState, useEffect } from "react";
+// import { Link } from "react-router-dom";
+// import { fetchProducts, deleteProduct } from '../authService';
 
 export default function Index() {
-  const [data, setData] = useState([]);
+//   const [data, setData] = useState([]);
 
-  useEffect(() => {
-    const loadProducts = async () => {
-      try {
-        const response = await fetchProducts();
-        setData(response.data);
-      } catch (error) {
-        console.error("Erreur lors de la récupération des produits :", error);
-      }
-    };
+//   useEffect(() => {
+//     const loadProducts = async () => {
+//       try {
+//         const response = await fetchProducts();
+//         setData(response.data);
+//       } catch (error) {
+//         console.error("Erreur lors de la récupération des produits :", error);
+//       }
+//     };
 
-    loadProducts();
-  }, []);
+//     loadProducts();
+//   }, []);
 
-  const handleDelete = async (id) => {
-    try {
-      await deleteProduct(id);
-      setData(data.filter(item => item.id !== id));
-    } catch (error) {
-      console.error("Erreur lors de la suppression du produit :", error);
-    }
-  };
+//   const handleDelete = async (id) => {
+//     try {
+//       await deleteProduct(id);
+//       setData(data.filter(item => item.id !== id));
+//     } catch (error) {
+//       console.error("Erreur lors de la suppression du produit :", error);
+//     }
+//   };
 
   return (
     <>
-      <table border={1}>
+    <h1>welcome</h1>
+      {/* <table border={1}>
         <thead>
           <tr>
             <th>ID</th>
@@ -58,7 +59,7 @@ export default function Index() {
             </tr>
           ))}
         </tbody>
-      </table>
+      </table> */}
     </>
   );
 }

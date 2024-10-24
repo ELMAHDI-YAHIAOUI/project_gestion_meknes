@@ -29,10 +29,8 @@ class CommandeController extends Controller
      */
     public function store(Request $request)
     {
-        // Vérifiez les données reçues
-        dd($request->all()); // Cela affichera toutes les données que vous avez envoyées
+        dd($request->all());
 
-        // Validation des données
         $validatedData = $request->validate([
             'nom_complet' => 'required|string',
             'telephone' => 'required|string',
@@ -41,11 +39,10 @@ class CommandeController extends Controller
             'specialite' => 'required|string',
             'cycle' => 'required|string',
             'qualite' => 'required|string',
-            'commandes' => 'required|array', // Assurez-vous que les commandes sont un tableau
+            'commandes' => 'required|array',
         ]);
 
         try {
-            // Créer un client
             $client = Client::create([
                 'nom_complete' => $validatedData['nom_complet'],
                 'telephone' => $validatedData['telephone'],
@@ -54,13 +51,20 @@ class CommandeController extends Controller
                 'specialite' => $validatedData['specialite'],
                 'cycle' => $validatedData['cycle'],
             ]);
+            return response()->json([
+                'token' => $client->createToken('token-name')->plainTextToken,
+                'client' => $client,
+            ]);
 
-            // Créer une commande
-            Commande::create([
+            $Commande = Commande::create([
                 'orderDate' => now(),
                 'qualite' => $validatedData['qualite'],
-                'commande' => json_encode($validatedData['commandes']), // Assurez-vous que cela correspond à votre structure de données
+                'commande' => json_encode($validatedData['commandes']),
                 'client_id' => $client->id,
+            ]);
+            return response()->json([
+                'token' => $Commande->createToken('token-name')->plainTextToken,
+                'Commande' => $Commande,
             ]);
 
             return response()->json(['message' => 'Commande créée avec succès'], 201);
