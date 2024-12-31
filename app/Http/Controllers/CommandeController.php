@@ -29,13 +29,13 @@ class CommandeController extends Controller
      */
     public function store(Request $request)
     {
-        dd($request->all());
+        //dd($request->all());
 
         $validatedData = $request->validate([
             'nom_complet' => 'required|string',
             'telephone' => 'required|string',
             'niveau' => 'required|string',
-            'ecole' => 'required|string',
+            'ecole' => '',
             'specialite' => 'required|string',
             'cycle' => 'required|string',
             'qualite' => 'required|string',
@@ -51,10 +51,10 @@ class CommandeController extends Controller
                 'specialite' => $validatedData['specialite'],
                 'cycle' => $validatedData['cycle'],
             ]);
-            return response()->json([
+            /*return response()->json([
                 'token' => $client->createToken('token-name')->plainTextToken,
                 'client' => $client,
-            ]);
+            ]);*/
 
             $Commande = Commande::create([
                 'orderDate' => now(),
@@ -62,13 +62,22 @@ class CommandeController extends Controller
                 'commande' => json_encode($validatedData['commandes']),
                 'client_id' => $client->id,
             ]);
-            return response()->json([
+            /*return response()->json([
                 'token' => $Commande->createToken('token-name')->plainTextToken,
                 'Commande' => $Commande,
-            ]);
+            ]);*/
+             //return response()->json(['message' => 'Commande créée avec succès'], 201);
 
-            return response()->json(['message' => 'Commande créée avec succès'], 201);
+            //ghir too much returnes dima khli return hta l tali dir just once, it coudl create issues sometimes
+             return response()->json([
+                'client' => $client,
+                'commande' => $commande,
+                'message' => 'Commande créée avec succès'
+            ], 201);
+
+
         } catch (\Exception $e) {
+            dd($e->getMessage());
             return response()->json(['message' => 'Erreur : ' . $e->getMessage()], 500);
         }
     }
@@ -80,6 +89,11 @@ class CommandeController extends Controller
     public function show(commande $commande)
     {
         //
+    }
+    public function test()
+    {
+        dd('test');
+        return response()->json(['test'], 200);
     }
 
     /**

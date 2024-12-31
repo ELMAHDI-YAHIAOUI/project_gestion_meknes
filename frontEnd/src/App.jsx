@@ -9,6 +9,8 @@ import Register from './components/loginComponent/register';
 import Logout from './components/loginComponent/Logout';
 import CommandeForm from './components/commandeComponent/commande'
 import ListCommandeComponent from './components/commandeComponent/listCommandeComponent'
+import AffectationCommande from './components/commandeComponent/affectationCommandeComponent'
+import FormComponent from './components/commandeComponent/testFormComponent'
 import FF from './components/xsxs'
 
 function App() {
@@ -25,6 +27,8 @@ function App() {
 
                 <Route path='/CommandeForm' element={<CommandeForm/>} />
                 <Route path='/ListCommandeComponent' element={<ListCommandeComponent/>} />
+                <Route path='/AffectationCommande' element={<AffectationCommande/>} />
+                <Route path='/FormComponent' element={<FormComponent/>} />
                 <Route path='/FF' element={<FF/>} />
             </Routes>
         </Router>

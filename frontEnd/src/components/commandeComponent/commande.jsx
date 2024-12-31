@@ -3,21 +3,22 @@ import axios from 'axios';
 
 
 const CommandeForm = () => {
-  const [formValues, setFormValues] = useState({
-    fullName: '',
-    phone: '',
-    niveau: '',
-    cycle: '',
-    specialite: '',
-    allCommands: false,
-    books: false,
-    notebooks: false,
-    fournitures: false,
-    goodQuality: false,
-    averageQuality: false,
-    schoolSearch: '',
-    selectedSchool: [],
-  });
+    const [formValues, setFormValues] = useState({
+      fullName: '',
+      phone: '',
+      niveau: '',
+      cycle: '',
+      specialite: '',
+      21: '',
+      allCommands: false,
+      books: false,
+      notebooks: false,
+      fournitures: false,
+      goodQuality: false,
+      averageQuality: false,
+      schoolSearch: '',
+      selectedSchool: [],
+    });
 
 
   const [ecoles, setEcoles] = useState([]);
@@ -82,6 +83,8 @@ const ni = niveaux.filter((x) => x.id_niveau == selectedNiveau).map((v) => v.lib
 
 const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+
+
     setFormValues((prevValues) => ({
         ...prevValues,
         [name]: type === 'checkbox' ? checked : value || '',
@@ -91,6 +94,7 @@ const handleChange = (e) => {
 
 const submitForm = async (event) => {
     event.preventDefault();
+
     let qualite = {
         "goodQuality": formValues.goodQuality,
         "averageQuality": formValues.averageQuality,
