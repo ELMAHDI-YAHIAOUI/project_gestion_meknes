@@ -7,6 +7,8 @@ use App\Http\Controllers\EcoleController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Laravel\Sanctum\Http\Controllers\CsrfCookieController;
+
 
 Route::post('/register', [AuthController::class, 'Register'])->name("register");
 
@@ -21,16 +23,21 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// Route::resource('product', ProductController::class);
 Route::resource('ecoles', EcoleController::class);
 Route::resource('cycle', CycleController::class);
-Route::resource('ecoles', EcoleController::class);
+
+// Routes personnalisées pour récupérer les relations
 Route::get('ecole/{ecole_id}/cycles', [EcoleController::class, 'getCycles']);
 Route::get('cycle/{cycle_id}/niveaux', [EcoleController::class, 'getNiveaux']);
 Route::get('niveau/{niveau_id}/specialtes', [EcoleController::class, 'getSpecialtes']);
 
 
 
-Route::post('/api/commandes', [CommandeController::class, 'store']);
-Route::post('/api/test', [CommandeController::class, 'test']);
-Route::post('/formTest', [formTestController::class, 'store']);
+Route::post('/commandes', [CommandeController::class, 'store']);
+
+
+
+
+
+// Route::post('/api/test', [CommandeController::class, 'test']);
+// Route::post('/formTest', [formTestController::class, 'store']);

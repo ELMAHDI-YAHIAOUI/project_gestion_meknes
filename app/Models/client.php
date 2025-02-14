@@ -2,31 +2,34 @@
 
 namespace App\Models;
 
-use App\Models\ecole;
-use App\Models\commande;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
-class client extends Model
+class Client extends Model
 {
     use HasFactory;
+
     protected $fillable = [
-        'nom_complete',
+        'nom_complet',
         'telephone',
         'niveau',
         'ecole',
         'specialite',
         'cycle',
-    ];     protected $primaryKey="id_client";
+        'id_ecole',
+    ];
 
+    protected $primaryKey = 'id_client'; // Clé primaire personnalisée
 
-    public function ecole(){
-        return $this->belongsTo(ecole::class,'id_ecole');
-}
+    // Relation avec l'école
+    public function ecole()
+    {
+        return $this->belongsTo(Ecole::class, 'id_ecole');
+    }
 
-
-public function commande(){
-    return $this->hasMany(commande::class,'id_commande');
-}
-
+    // Relation avec les commandes
+    public function commandes()
+    {
+        return $this->hasMany(Commande::class, 'id_client');
+    }
 }

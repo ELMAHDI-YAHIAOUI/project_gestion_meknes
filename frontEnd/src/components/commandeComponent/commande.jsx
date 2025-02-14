@@ -1,25 +1,23 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
-
 const CommandeForm = () => {
-    const [formValues, setFormValues] = useState({
-      fullName: '',
-      phone: '',
-      niveau: '',
-      cycle: '',
-      specialite: '',
-      21: '',
-      allCommands: false,
-      books: false,
-      notebooks: false,
-      fournitures: false,
-      goodQuality: false,
-      averageQuality: false,
-      schoolSearch: '',
-      selectedSchool: [],
-    });
-
+  const [formValues, setFormValues] = useState({
+    fullName: '',
+    phone: '',
+    niveau: '',
+    cycle: '',
+    specialite: '',
+    21: '',
+    allCommands: false,
+    books: false,
+    notebooks: false,
+    fournitures: false,
+    goodQuality: false,
+    averageQuality: false,
+    schoolSearch: '',
+    selectedSchool: [],
+  });
 
   const [ecoles, setEcoles] = useState([]);
   const [filteredEcoles, setFilteredEcoles] = useState([]);
@@ -32,13 +30,9 @@ const CommandeForm = () => {
   const [selectedNiveau, setSelectedNiveau] = useState(null);
   const [selectspecialite, setselectspecialite] = useState(null);
 
-
-
-const ec =ecoles.filter((x)=>x.id_ecole==selectedEcole).map((v)=>(v.nom_ecole)).join(', ')
-const cy = cycles.filter((x)=>x.id_cycle==selectedCycle).map((v)=>(v.libelle)).join(', ')
-const ni = niveaux.filter((x) => x.id_niveau == selectedNiveau).map((v) => v.libelle).join(', ');
-
-
+  const ec = ecoles.filter((x) => x.id_ecole == selectedEcole).map((v) => v.nom_ecole).join(', ');
+  const cy = cycles.filter((x) => x.id_cycle == selectedCycle).map((v) => v.libelle).join(', ');
+  const ni = niveaux.filter((x) => x.id_niveau == selectedNiveau).map((v) => v.libelle).join(', ');
 
   useEffect(() => {
     axios.get("http://localhost:8000/api/ecoles")
@@ -48,7 +42,6 @@ const ni = niveaux.filter((x) => x.id_niveau == selectedNiveau).map((v) => v.lib
       })
       .catch(error => console.error("Error fetching ecoles:", error));
   }, []);
-
 
   const handleSearchChange = (event) => {
     const { name, value } = event.target;
@@ -61,6 +54,7 @@ const ni = niveaux.filter((x) => x.id_niveau == selectedNiveau).map((v) => v.lib
   };
 
   const handleEcoleChange = (ecoleId) => {
+    console.log('École sélectionnée :', ecoleId); // Debug
     setSelectedEcole(ecoleId);
     axios.get(`http://localhost:8000/api/ecole/${ecoleId}/cycles`)
       .then(response => setCycles(response.data))
@@ -81,73 +75,98 @@ const ni = niveaux.filter((x) => x.id_niveau == selectedNiveau).map((v) => v.lib
       .catch(error => console.error("Error fetching specialtes:", error));
   };
 
-const handleChange = (e) => {
+  const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-
-
     setFormValues((prevValues) => ({
-        ...prevValues,
-        [name]: type === 'checkbox' ? checked : value || '',
+      ...prevValues,
+      [name]: type === 'checkbox' ? checked : value || '',
     }));
-};
+  };
 
-
-const submitForm = async (event) => {
+  const submitForm = async (event) => {
     event.preventDefault();
 
+    // Vérifier que l'école est sélectionnée
+    if (!selectedEcole) {
+      console.error('Veuillez sélectionner une école');
+      alert('Veuillez sélectionner une école');
+      return;
+    }
+
+    // Vérifier que l'ID de l'école est valide
+    const isEcoleValid = ecoles.some(ecole => ecole.id_ecole == selectedEcole);
+    if (!isEcoleValid) {
+      console.error('École invalide');
+      alert('École invalide');
+      return;
+    }
+
     let qualite = {
-        "goodQuality": formValues.goodQuality,
-        "averageQuality": formValues.averageQuality,
+      "goodQuality": formValues.goodQuality,
+      "averageQuality": formValues.averageQuality,
     };
     const quality = Object.keys(qualite).find(key => qualite[key] === true);
 
     const dataToSend = {
-        nom_complet: formValues.fullName,
-        telephone: formValues.phone,
-        niveau: ni,
-        cycle: cy,
-        specialite: selectspecialite,
-        commandes: {
-            allCommands: formValues.allCommands,
-            books: formValues.books,
-            notebooks: formValues.notebooks,
-            fournitures: formValues.fournitures,
-        },
-        qualite: quality,
-        ecoles : ec
+      nom_complet: formValues.fullName,
+      telephone: formValues.phone,
+      niveau: ni,
+      cycle: cy,
+      specialite: selectspecialite,
+      commandes: {
+        allCommands: formValues.allCommands,
+        books: formValues.books,
+        notebooks: formValues.notebooks,
+        fournitures: formValues.fournitures,
+      },
+      qualite: quality,
+      ecole: ec, // Nom de l'école
+      id_ecole: selectedEcole, // Inclure l'id_ecole sélectionné
     };
 
-    console.log('Données à envoyer:', dataToSend);
+    console.log('Données à envoyer:', dataToSend); // Debug
 
     try {
-        const response = await axios.post('http://localhost:8000/api/commandes', dataToSend, {withCredentials: false,});
-        console.log('Données envoyées avec succès:', response.data);
+      const response = await axios.post('http://localhost:8000/api/commandes', dataToSend, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      console.log('Données envoyées avec succès:', response.data);
+      alert('Commande créée avec succès');
     } catch (error) {
-        console.error("Erreur lors de l'envoi des données:", error.response ? error.response.data : error);
+      console.error("Erreur lors de l'envoi des données:", error.response ? error.response.data : error);
+      alert("Erreur lors de l'envoi des données");
     }
-};
+  };
 
   const toggleCommandCheckboxes = (name) => {
     setFormValues((prev) => {
-      const newValues = { ...prev, [name]: !prev[name] };
+      const newValues = { ...prev };
 
-      if (name !== 'allCommands' && prev.allCommands) {
+      if (name === 'allCommands') {
+        // Si "Toutes les commandes" est coché, décochez les autres cases
+        newValues.allCommands = !prev.allCommands;
+        newValues.books = false;
+        newValues.notebooks = false;
+        newValues.fournitures = false;
+      } else {
+        // Si une autre case est cochée, décochez "Toutes les commandes"
         newValues.allCommands = false;
-      }
+        newValues[name] = !prev[name];
 
-      if (newValues.books && newValues.notebooks && newValues.fournitures) {
-        return {
-          allCommands: true,
-          notebooks: false,
-          books: false,
-          fournitures: false,
-        };
+        // Si toutes les cases sont cochées, cochez "Toutes les commandes" et décochez les autres
+        if (newValues.books && newValues.notebooks && newValues.fournitures) {
+          newValues.allCommands = true;
+          newValues.books = false;
+          newValues.notebooks = false;
+          newValues.fournitures = false;
+        }
       }
 
       return newValues;
     });
   };
-
 
   const updateQualityCheckboxes = (checkedId, otherId) => {
     setFormValues((prev) => ({

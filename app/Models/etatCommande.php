@@ -9,11 +9,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class etatCommande extends Model
 {
     use HasFactory;
-    protected $primaryKey = "id_etatCommand" ;
+    protected $primaryKey = "id_etatCommande" ;
     protected $table = "etat_commandes" ;
 
-    public function commande(){
-        return $this->hasMany(commande::class,'id_commande');
-}
+//     public function commande(){
+//         return $this->hasMany(commande::class,'id_commande');
+// }
 
 }

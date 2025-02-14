@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('etat_commandes', function (Blueprint $table) {
-            $table->id("id_etatCommande");
-            $table->string("libelle");
+            $table->id('id_etatCommande'); // Clé primaire auto-incrémentée
+            $table->string('libelle');
             $table->timestamps();
         });
     }

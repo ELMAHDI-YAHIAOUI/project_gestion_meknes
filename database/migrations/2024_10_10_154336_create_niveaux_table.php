@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
+    /**0-=[]
      * Run the migrations.
      */
     public function up(): void

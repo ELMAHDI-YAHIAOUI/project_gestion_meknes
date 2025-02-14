@@ -2,19 +2,18 @@
 
 namespace App\Models;
 
-use App\Models\client;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
-class ecole extends Model
+class Ecole extends Model
 {
     use HasFactory;
-    protected $primaryKey="id_ecole";
 
+    protected $primaryKey = 'id_ecole'; // Clé primaire personnalisée
 
-
-    public function client(){
-        return $this->hasMany(client::class,'id_client');
-}
-
+    // Relation avec les clients
+    public function clients()
+    {
+        return $this->hasMany(Client::class, 'id_ecole');
+    }
 }
